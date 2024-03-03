@@ -1,0 +1,34 @@
+﻿Install LAMP Stack on Linux
+1.Install and configure apache server:
+yum install httpd -y
+systemctl start httpd
+2.Install and configure mariadb database server:
+yum install mariadb*
+systemctl start mariadb
+ mysql_secure_installation
+set password to the root user
+mysql -u root
+3.Install and configure Php latest package:
+yum list php*
+select latest package
+yum install php8.2-mysqlnd.x86_64
+yum install php-cli php-pdo php-fpm php-json php-mysqlnd
+systemctl start php-fpm
+provide ownership for the user
+chown -R $USER /var/www/html
+4.PhpMyAdmin installation:
+cd  /var/www/html
+create phpmyadmin directory
+mkdir phpmyadmin
+cd /opt
+download the latest PhpMyadmin package
+ wget https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.tar.gz
+then extract
+tar zxvf phpMyAdmin-5.2.1-all-languages.tar.gz -C /var/www/html/phpmyadmin --strip-components=1
+systemctl restart httpd.service
+systemctl restart mariadb.service
+use your publicip/phpmyadmin
+you get a login page
+user name root
+password(previously you set in the mariadb installation)
+we successfully installed LAMP stack....

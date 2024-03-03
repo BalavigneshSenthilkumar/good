@@ -1,0 +1,5 @@
+install aws cli
+aws configure
+copy and paste the access id and key
+select region ap-south-1
+aws ec2 create-key-pair --key-name goa --query 'KeyMaterial' --output text > goa.pem

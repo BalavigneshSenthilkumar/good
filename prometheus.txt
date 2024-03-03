@@ -1,0 +1,81 @@
+﻿Prometheus installation
+make directory
+mkdir prometheus-files
+cd /opt
+download the prometheus package
+using this page to download latest package
+(https://prometheus.io/download/)
+ wget https://github.com/prometheus/prometheus/releases/download/v2.50.0-rc.0/prometheus-2.50.0-rc.0.linux-amd64.tar.gz
+extract the zip file into the prometheus-files
+ tar -zxvf prometheus-2.50.0-rc.0.linux-amd64.tar.gz -C /prometheus-files --strip-components=1
+2.Create Prometheus user and gave Permissions
+useradd --no-create-home --shell /bin/false prometheus
+mkdir /etc/prometheus
+mkdir /var/lib/prometheus
+chown prometheus:prometheus /etc/prometheus
+chown prometheus:prometheus /var/lib/prometheus
+
+Copy prometheus and promtool binary from prometheus-files folder to /usr/local/bin and change the ownership to prometheus user.
+
+cp prometheus-files/prometheus /usr/local/bin/
+cp prometheus-files/promtool /usr/local/bin/
+chown prometheus:prometheus /usr/local/bin/prometheus
+chown prometheus:prometheus /usr/local/bin/promtool
+
+move configuration files to etc
+
+cp -r prometheus-files/consoles /etc/prometheus
+cp -r prometheus-files/console_libraries /etc/prometheus
+chown -R prometheus:prometheus /etc/prometheus/consoles
+chown -R prometheus:prometheus /etc/prometheus/console_libraries
+
+3.Configure the prometheus
+Create the prometheus.yml file.
+
+vi /etc/prometheus/prometheus.yml
+ copy and paste the below configuration
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+:wq!
+then change the owenership
+chown prometheus:prometheus /etc/prometheus/prometheus.yml
+
+Setup Prometheus Service File
+vi /etc/systemd/system/prometheus.service
+copy and paste the below configuration
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus \
+    --config.file /etc/prometheus/prometheus.yml \
+    --storage.tsdb.path /var/lib/prometheus/ \
+    --web.console.templates=/etc/prometheus/consoles \
+    --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+:wq!
+reload the process
+systemctl daemon-reload
+systemctl start prometheus
+systemctl status prometheus
+the status should be active and running
+go to the security group 
+add inbound rules allow port 9090
+allow all ipv4s save the rules
+go to the browser
+paste ur puplic ip:9090/graph
+you'll get the prometheus webpage
+we successfully install the prometheus monitoring tool...

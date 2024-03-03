@@ -1,0 +1,75 @@
+install and configure Nagios
+
+step by step
+step 1
+install 
+* Apache
+* PHP
+* GCC compiler
+* GD development libraries
+yum install httpd php
+yum install gcc glibc glibc-common
+yum install gd gd-devel
+ 
+create user and group  as a nagios and nagcmd
+ useradd -m nagios
+ passwd nagios
+groupadd nagcmd
+usermod -aG nagcmd nagios
+usermod -aG nagcmd apache 
+
+Download Nagios Core and the Plugins
+make a directory downloads
+cd downloads
+Inside the downloads folder download a nagios
+wget https://sourceforge.net/projects/nagios/files/nagios-4.x/nagios-4.4.6/nagios-4.4.6.tar.gz
+ wget http://nagios-plugins.org/download/nagios-plugins-2.4.8.tar.gz
+then extract the downloaded file
+
+ tar zxvf nagios-4.4.6.tar.gz
+then cd nagios-4.4.6
+after that Run the script
+./configure --with-command-group=nagcmd
+run the following commands
+make all
+(make sure no error occured)
+make install
+make install-init
+make install-config
+make install-commandmode
+Coustomize the configuration
+
+vim /usr/local/nagios/etc/objects/contacts.cfg
+(in this configuration Add your mail address)
+
+Configure web interface
+ make install-webconf
+
+sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin       //Type the new password twice.
+sudo service httpd restart                                             //Restart Service
+
+Compile and Install the Nagios Plugins
+
+cd ~/downloads
+tar zxvf nagios-plugins-2.0.3.tar.gz
+cd nagios-plugins-2.0.3
+
+run the script
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+ make
+ sudo make install
+start the nagios
+ make sure port 80 is enabled in security groups
+chkconfig nagios on
+
+Verify the sample Nagios configuration files.
+
+sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+
+service nagios start
+
+use ur puplic ip/nagios
+ you"ll get the User interface
+type nagiosadmin(username)
+Password you already configured the password
+sucessfully installed and configured nagios
