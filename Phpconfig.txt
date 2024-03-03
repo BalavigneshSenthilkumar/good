@@ -1,0 +1,22 @@
+PHP install and configuraion:
+ 	1.Create one Ec2 instance
+	2.Install and start the Apache web server
+	3.Then install Php by using the command
+first search avialble PHP package
+	yum list php*
+	Then copy this version (php8.1-mysqlnd.x86_64)
+	Pass the following command
+	yum install php8.1-mysqlnd.x86_64 
+	yum install php-cli php-pdo php-fpm php-json php-mysqlnd
+	php -v
+	systemctl start php-fpm
+	 cd /var/www/html/
+	vi index.php and paste the following
+	<?php
+	phpinfo();
+		?>
+	:wq!
+	use ur pupblic ip to check 
+ 
+
+

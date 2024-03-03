@@ -1,0 +1,15 @@
+Nginx Load balancer simple configuration
+events {}
+http {
+        upstream backend {
+                server 3.111.218.40:80;
+                server 13.201.56.29:80;
+                server 52.66.111.219:80;
+        }
+        server {
+                listen 80;
+                location / {
+                        proxy_pass http://backend;
+                }
+        }
+}
